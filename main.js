@@ -28,7 +28,7 @@ async function run() {
   await getAllData();
   sets.forEach( set => {
     generateTable(set)
-    mapProjectSet(set);
+    mapSequence(set);
     // set.forEach( proj => {
     //   enumerateProjectDays(proj)
     //   // mapProjectDays(proj);
@@ -89,22 +89,30 @@ function getSequenceEndDate(set) {
   return sequenceEnd;
 }
 
-function mapProjectSet(set) {
+function mapSequence(set) {
   const days  = new Map();
-  set.forEach( project => {
-    mapProjectDays(project, days);
-  })
+  const start = getSequenceStartDate(set)
+  const end = getSequenceEndDate(set)
+  let currentDay = start;
+  do {
+    days.set(currentDay, []);
+    currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
+
+  } while ( currentDay <= end)
+  // set.forEach( project => {
+  //   mapProjectDays(project, days);
+  // })
+  console.log(days);
+  return days;
 }
 
 function mapProjectDays({startDate, endDate, cityCost} = project, days) {
   let currentDay = startDate;
-
   do {
     // console.log(currentDay.toLocaleDateString());
     days.set(currentDay, cityCost)
     currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
   } while ( currentDay <= endDate)
-
 }
 
 run();
