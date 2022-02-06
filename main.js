@@ -33,7 +33,7 @@ async function run() {
     //   enumerateProjectDays(proj)
     //   // mapProjectDays(proj);
     // })
-    console.log(set);
+    // console.log(set);
     setInfo.push( {
       sequenceStart: getSequenceStartDate(set),
       sequenceEnd: getSequenceEndDate(set)
@@ -41,7 +41,7 @@ async function run() {
 
   });
 
-  console.log(setInfo);
+  // console.log(setInfo);
 }
 
 const generateTable = (function(set) {
@@ -95,13 +95,12 @@ function mapSequence(set) {
   const end = getSequenceEndDate(set)
   let currentDay = start;
   do {
-    days.set(currentDay, []);
+    days.set(currentDay.toLocaleDateString(), []);
     currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
-
   } while ( currentDay <= end)
-  // set.forEach( project => {
-  //   mapProjectDays(project, days);
-  // })
+  set.forEach( project => {
+    mapProjectDays(project, days);
+  })
   console.log(days);
   return days;
 }
@@ -109,8 +108,9 @@ function mapSequence(set) {
 function mapProjectDays({startDate, endDate, cityCost} = project, days) {
   let currentDay = startDate;
   do {
-    // console.log(currentDay.toLocaleDateString());
-    days.set(currentDay, cityCost)
+    const currentDayString = currentDay.toLocaleDateString();
+    console.log(days.get(currentDayString));
+    days.get(currentDayString) ? days.set(currentDayString, [...days.get(currentDayString), { cost: cityCost }]) : null;
     currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
   } while ( currentDay <= endDate)
 }
