@@ -18,7 +18,7 @@ async function GetData(url) {
 
 async function getAllData() {
   sets.push(await GetData('./data/set1.json'));
-  // sets.push(await GetData('./data/set2.json'));
+  sets.push(await GetData('./data/set2.json'));
   // sets.push(await GetData('./data/set3.json'));
   // sets.push(await GetData('./data/set4.json'));
 }
@@ -27,9 +27,10 @@ async function run() {
   await getAllData();
   sets.forEach( set => {
     generateTable(set)
+    mapProjectSet(set);
     set.forEach( proj => {
       enumerateProjectDays(proj)
-      mapProjectDays(proj);
+      // mapProjectDays(proj);
     })
   });
 }
@@ -71,11 +72,19 @@ function getSequenceStartEndDates({startDate, endDate} = project) {
 
 }
 
-function mapProjectDays({startDate, endDate} = project) {
+function mapProjectSet(set) {
+  const days  = new Map();
+  set.forEach( project => {
+    mapProjectDays(project, days);
+  })
+}
+
+function mapProjectDays({startDate, endDate, cityCost} = project, days) {
   let currentDay = startDate;
 
   do {
     console.log(currentDay.toLocaleDateString());
+    days.set(currentDay, cityCost)
     currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
   } while ( currentDay <= endDate)
 
