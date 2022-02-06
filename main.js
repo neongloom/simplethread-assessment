@@ -1,6 +1,7 @@
 'use strict' 
 import './style.css'
 const sets = [];
+const setInfo = [];
 
 async function GetData(url) {
   try {
@@ -19,8 +20,8 @@ async function GetData(url) {
 async function getAllData() {
   sets.push(await GetData('./data/set1.json'));
   sets.push(await GetData('./data/set2.json'));
-  // sets.push(await GetData('./data/set3.json'));
-  // sets.push(await GetData('./data/set4.json'));
+  sets.push(await GetData('./data/set3.json'));
+  sets.push(await GetData('./data/set4.json'));
 }
 
 async function run() {
@@ -28,11 +29,19 @@ async function run() {
   sets.forEach( set => {
     generateTable(set)
     mapProjectSet(set);
-    set.forEach( proj => {
-      enumerateProjectDays(proj)
-      // mapProjectDays(proj);
+    // set.forEach( proj => {
+    //   enumerateProjectDays(proj)
+    //   // mapProjectDays(proj);
+    // })
+    console.log(set);
+    setInfo.push( {
+      sequenceStart: getSequenceStartDate(set),
+      sequenceEnd: getSequenceEndDate(set)
     })
+
   });
+
+  console.log(setInfo);
 }
 
 const generateTable = (function(set) {
@@ -68,8 +77,16 @@ function enumerateProjectDays({startDate, endDate} = project) {
   console.log(dateDifferenceinDays);
 }
 
-function getSequenceStartEndDates({startDate, endDate} = project) {
+function getSequenceStartDate(set) {
+  const sequenceStart = set.reduce( (prev, currentProject) =>  prev < currentProject.startDate ? prev : currentProject.startDate, new Date() )
+  // console.log(sequenceStart.toLocaleDateString());
+  return sequenceStart;
+}
 
+function getSequenceEndDate(set) {
+  const sequenceEnd = set.reduce( (prev, currentProject) =>  prev > currentProject.endDate ? prev : currentProject.endDate, 0)
+  // console.log(sequenceEnd.toLocaleDateString());
+  return sequenceEnd;
 }
 
 function mapProjectSet(set) {
@@ -83,7 +100,7 @@ function mapProjectDays({startDate, endDate, cityCost} = project, days) {
   let currentDay = startDate;
 
   do {
-    console.log(currentDay.toLocaleDateString());
+    // console.log(currentDay.toLocaleDateString());
     days.set(currentDay, cityCost)
     currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
   } while ( currentDay <= endDate)
