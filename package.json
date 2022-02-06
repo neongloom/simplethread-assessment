@@ -1,0 +1,24 @@
+{
+  "name": "quasar_simplethread_fe",
+  "version": "1.0.0",
+  "description": "You have a set of projects, and you need to calculate a reimbursement amount for the set. Each project has a start date and an end date. The first day of a project and the last day of a project are always \"travel\" days. Days in the middle of a project are \"full\" days. There are also two types of cities a project can be in, high cost cities and low cost cities.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build", 
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neongloom/simplethread-assessment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neongloom/simplethread-assessment/issues"
+  },
+  "homepage": "https://github.com/neongloom/simplethread-assessment#readme",
+  "dependencies": {
+    "vite": "^2.7.13"
+  }
+}
