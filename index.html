@@ -7,6 +7,32 @@
   <title>Document</title>
 </head>
 <body>
+  <main id="main">
+    <h1>Calculating reimbursement amounts for sets of projects</h1>
+  </main>
   <script type="module" src="/main.js"></script>
+  <template class="dataset-template">
+    <article class="dataset">
+      <h2 class="dataset__heading"></h2>
+      <table class="dataset__table">
+        <thead>
+          <tr>
+            <td>City</td>
+            <td>Start Date</td>
+            <td>End Date</td>
+          </tr>
+          <tbody>
+          </tbody>
+        </thead>
+      </table>
+    </article>
+  </template>
+  <template class="datarow-template">
+    <tr>
+      <td class="datarow__city"></td>
+      <td class="datarow__startdate"></td>
+      <td class="datarow__enddate"></td>
+    </tr>
+  </template>
 </body>
 </html>

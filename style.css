@@ -1,0 +1,6 @@
+*, *:before, *:after { box-sizing: border-box; }
+main { display: grid; gap: 1.5rem; }
+
+.dataset table { border-spacing: 1rem; border-collapse: collapse; border: 1px solid grey; }
+.dataset thead { font-weight: 600; font-size: 1.25rem; }
+.dataset td { padding: 0.5rem .75rem; border: 1px solid grey;}
