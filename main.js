@@ -143,20 +143,19 @@ function calculateTotalReimbursement(days) {
     const projects = day.projects;
 
     // check sequences ends
-    let isTravelDay = !prev || !next; 
+    let isTravelDay = (!prev || !next) && projects.length === 1; 
 
     // check if it's between projects
-    isTravelDay = isTravelDay || day.projects.length === 0;
+    isTravelDay = isTravelDay || !day.projects.length; 
 
     // check if it's at the beginning or end of a project and isn't overlapping with or next to another project
-    isTravelDay = isTravelDay || ((!prev.projects.length || !next.projects.length) && day.projects.length === 1)
+    isTravelDay = isTravelDay || ((!prev?.projects.length || !next?.projects.length) && day.projects.length === 1)
     
     // rate defaults to low cost, use higher cost rate if projects overlap
     const rate = projects.reduce( (rate, cost) => {
       return rate === "low" && cost.toLowerCase() === "high" ? cost : rate
     }, "low");
 
-    // console.log(calculateDailyReimbursement(isTravelDay, rate))
     sum += calculateDailyReimbursement(isTravelDay, rate);
   })
   return sum;
