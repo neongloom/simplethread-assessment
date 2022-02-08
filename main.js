@@ -28,10 +28,6 @@ async function run() {
   await getAllData();
   const render = renderData();
   sets.forEach( (set, index) => {
-    // setInfo.push( {
-    //   sequenceStart: getSequenceStartDate(set),
-    //   sequenceEnd: getSequenceEndDate(set)
-    // })
     const days = render.mapDays(set);
     sequences.push(days);
     render.generateTable(set);
@@ -42,7 +38,6 @@ async function run() {
     let totalReimbursement = render.calculateTotalReimbursement(days);
     console.log(totalReimbursement);
   })
-
   console.log(sequences);
 }
 
@@ -179,20 +174,13 @@ const renderData = function() {
       const prev = days.get(day.prev);
       const next = days.get(day.next);
       const projects = day.projects;
-      const isProjectDay = projects.length ? 1 : 0;
+      const currentDayProjects = projects.map( project => project.number );
+      const prevProjects = prev ? prev.projects : [];
+      const nextProjects = next ? next.projects : [];
+      const adjacentDayProjects = [...prevProjects.map (p => p.number), ...nextProjects.map( p => p.number)];
+      const isAdjacentToAnotherProject = projects.length ? adjacentDayProjects.some( p => !currentDayProjects.includes(p)) : false;
 
-      // check sequences ends
-      // let isNextToAnotherProject = day.projects.some( project => {
-      //   return project.
-      // })
-      let isTravelDay = (!prev || !next) && projects.length === 1; 
-        // const projectIsActive = day.projects.some( project => projectIndex === project.number);
-
-      // check if it's between projects
-      // isTravelDay = isTravelDay || !day.projects.length; 
-
-      // check if it's at the beginning or end of a project and isn't overlapping with or next to another project
-      isTravelDay = isTravelDay || ((!prev?.projects.length || !next?.projects.length) && day.projects.length === 1)
+      let isTravelDay = (!prev || !next || (!prev?.projects.length || !next?.projects.length)) && projects.length === 1 &&  !isAdjacentToAnotherProject; 
       
       // rate defaults to low cost, use higher cost rate if projects overlap
       const rate = projects.reduce( (rate, project) => {
@@ -200,7 +188,6 @@ const renderData = function() {
       }, "");
 
       dayrates.push( {isTravelDay, rate});
-      // sum += calculateDailyReimbursement(isTravelDay, rate) * isProjectDay;
     })
     return dayrates;
   }
@@ -234,13 +221,16 @@ function getSequenceEndDate(set) {
   return sequenceEnd;
 }
 
-window.toggleCellDisplay = function (){
+window.toggleCellDisplay = function() {
   const row = event.target.parentNode;
   const cells = [...row.querySelectorAll('div')];
   cells.forEach( cell => {
     cell.classList.toggle('show-cost');
   })
 
+}
+
+window.calculateReimbursement = function() {
 }
 
 run();
