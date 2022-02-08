@@ -26,18 +26,16 @@ async function getAllData() {
 
 async function run() {
   await getAllData();
-  sets.forEach( set => {
-    generateTable(set)
-    sequences.push(mapSequence(set));
-    // set.forEach( proj => {
-    //   enumerateProjectDays(proj)
-    //   // mapProjectDays(proj);
-    // })
-    // console.log(set);
+  const render = renderData();
+  sets.forEach( (set, index) => {
     // setInfo.push( {
     //   sequenceStart: getSequenceStartDate(set),
     //   sequenceEnd: getSequenceEndDate(set)
     // })
+    const days = render.mapDays(set);
+    sequences.push(days);
+    render.generateTable(set);
+    render.visualizeDays(index);
 
   });
   sequences.forEach( days => {
@@ -48,19 +46,23 @@ async function run() {
   console.log(sequences);
 }
 
-const generateTable = (function(set) {
-  let tableCount = 0;
+const renderData = function() {
+  let datasets = [];
+  let daysets = [];
+  console.log('render data');
 
-  return function(set) {
+  const generateTable = function(set) {
     if (!set) return;
+    datasets.push(set);
+    const tableCount = datasets.length;
 
-    tableCount++;
     const main = document.querySelector('#main');
     const sectionTemplate = document.querySelector('.dataset-template');
     const rowTemplate= document.querySelector('.datarow-template');
 
     const section = sectionTemplate.content.firstElementChild.cloneNode(true);
     section.querySelector('.dataset__heading').textContent = `Project set #${tableCount}`;
+    section.setAttribute('data-set', `${tableCount-1}`);
     const tableBody = section.querySelector('tbody');
     main.appendChild(section);
 
@@ -72,14 +74,112 @@ const generateTable = (function(set) {
       tableBody.appendChild(row);
     })
   };
-})();
+
+  const mapDays = function(set) {
+    const days  = new Map();
+    const start = getSequenceStartDate(set)
+    const end = getSequenceEndDate(set)
+    let currentDay = start;
+
+    // create map of all days in a sequence
+    // projects stores (cost of) all projects occuring on that day
+    do {
+      const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
+      const prevDay = new Date(currentDay.getTime() - (1000 * 3600 * 24));
+      const next = (nextDay <= end) ? nextDay.toLocaleDateString() : null;
+      const prev = (currentDay != start) ? prevDay.toLocaleDateString() : null;
+      days.set(currentDay.toLocaleDateString(), { projects:[], next, prev }); // kind of realized here an actual linked list would be better so that's something I can refactor to in the future
+      currentDay = nextDay;
+    } while ( currentDay <= end)
+    set.forEach( (project, i) => {
+      mapProjectDays(project, days, i);
+    })
+    console.log(days);
+    daysets.push(days);
+    return days;
+  }
+
+  const mapProjectDays = function({startDate, endDate, cityCost} = project, days, number) {
+    let currentDay = startDate;
+    do {
+      const currentDayString = currentDay.toLocaleDateString();
+      // console.log(days.get(currentDayString));
+      const day = days.get(currentDayString);
+      day ? days.set(currentDayString, {...day, projects: [...day?.projects, {cityCost, number }] }) : null;
+      currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
+    } while ( currentDay <= endDate)
+  }
+
+  const visualizeDays = function(datasetIndex) {
+    const days = daysets[datasetIndex];
+    const projects = datasets[datasetIndex];
+    const parentContainer = document.querySelector(`[data-set="${datasetIndex}"]`);
+    const timeline = document.createElement('div');
+    timeline.classList.add('timeline');
+
+    const timelineheaderTemplate = document.querySelector('.timeline-header-template');
+    const timelineheader = timelineheaderTemplate.content.firstElementChild.cloneNode(true);
+
+    let timelineheaderHTML = '<div></div>';
+    days.forEach( (day, index, days) => console.log(day) )
+    days.forEach( (day, index, days) => timelineheaderHTML += `<div>${index.replace(/([/][\d]+$)/, '')}</div>` )
+    timelineheader.innerHTML = timelineheaderHTML;
+    timeline.appendChild(timelineheader);
+
+    const startDate = getSequenceStartDate(projects)
+    const endDate = getSequenceEndDate(projects)
+
+    projects.forEach((project,projectIndex) => {
+      const timelineprojectTemplate = document.querySelector('.timeline-project-template');
+      const timelineproject = timelineprojectTemplate.content.firstElementChild.cloneNode(true);
+      timelineproject.setAttribute('data-cost', project.cityCost);
+      let timelineprojectHTML = `<div>${projectIndex}</div>`;
+      days.forEach((day,i) => {
+        const projectIsActive = day.projects.some( project => projectIndex === project.number);
+        const isActive = projectIsActive ? 'class="isActive"' : '';
+        timelineprojectHTML = `${timelineprojectHTML}<div ${isActive}></div>` 
+      })
+      timelineproject.innerHTML = timelineprojectHTML;
+      timeline.appendChild(timelineproject);
+    })
+
+    // projects.reduce( (cells, project) => {
+    //   let currentDay = startDate;
+    //   do {
+    //     const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
+        
+    //     currentDay = nextDay;
+    //   } while ( currentDay <= end)
+    //   return;
+
+    // }, `<div>${project.cityCost}</div>`)
 
 
-function enumerateProjectDays({startDate, endDate} = project) {
-  const dateDifference = endDate - startDate;
-  const dateDifferenceinDays = dateDifference / (1000 * 3600 * 24);
-  console.log(dateDifferenceinDays);
-}
+    parentContainer.appendChild(timeline);
+
+    // const start = getSequenceStartDate(set)
+    // const end = getSequenceEndDate(set)
+    // let currentDay = start;
+
+    // // create map of all days in a sequence
+    // // projects stores (cost of) all projects occuring on that day
+    // do {
+    //   const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
+    //   const prevDay = new Date(currentDay.getTime() - (1000 * 3600 * 24));
+    //   const next = (nextDay <= end) ? nextDay.toLocaleDateString() : null;
+    //   const prev = (currentDay != start) ? prevDay.toLocaleDateString() : null;
+    //   days.set(currentDay.toLocaleDateString(), { projects:[], next, prev }); // kind of realized here an actual linked list would be better so that's something I can refactor to in the future
+    //   currentDay = nextDay;
+    // } while ( currentDay <= end)
+
+  }
+
+  return {
+    generateTable,
+    visualizeDays,
+    mapDays
+  }
+};
 
 function getSequenceStartDate(set) {
   const sequenceStart = set.reduce( (prev, currentProject) =>  prev < currentProject.startDate ? prev : currentProject.startDate, new Date() )
@@ -91,41 +191,6 @@ function getSequenceEndDate(set) {
   const sequenceEnd = set.reduce( (prev, currentProject) =>  prev > currentProject.endDate ? prev : currentProject.endDate, 0)
   // console.log(sequenceEnd.toLocaleDateString());
   return sequenceEnd;
-}
-
-function mapSequence(set) {
-  const days  = new Map();
-  const start = getSequenceStartDate(set)
-  const end = getSequenceEndDate(set)
-  let currentDay = start;
-
-  // create map of all days in a sequence
-  // projects stores (cost of) all projects occuring on that day
-  do {
-    const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
-    const prevDay = new Date(currentDay.getTime() - (1000 * 3600 * 24));
-    const next = (nextDay <= end) ? nextDay.toLocaleDateString() : null;
-    const prev = (currentDay != start) ? prevDay.toLocaleDateString() : null;
-    days.set(currentDay.toLocaleDateString(), { projects:[], next, prev }); // kind of realized here an actual linked list would be better so that's something I can refactor to in the future
-    currentDay = nextDay;
-  } while ( currentDay <= end)
-  console.log(days);
-  set.forEach( project => {
-    mapProjectDays(project, days);
-  })
-  console.log(days);
-  return days;
-}
-
-function mapProjectDays({startDate, endDate, cityCost} = project, days) {
-  let currentDay = startDate;
-  do {
-    const currentDayString = currentDay.toLocaleDateString();
-    // console.log(days.get(currentDayString));
-    const day = days.get(currentDayString);
-    day ? days.set(currentDayString, {...day, projects: [...day?.projects, cityCost] }) : null;
-    currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
-  } while ( currentDay <= endDate)
 }
 
 /**
@@ -153,8 +218,8 @@ function calculateTotalReimbursement(days) {
     isTravelDay = isTravelDay || ((!prev?.projects.length || !next?.projects.length) && day.projects.length === 1)
     
     // rate defaults to low cost, use higher cost rate if projects overlap
-    const rate = projects.reduce( (rate, cost) => {
-      return rate === "low" && cost.toLowerCase() === "high" ? cost : rate
+    const rate = projects.reduce( (rate, project) => {
+      return rate === "low" && project.cityCost.toLowerCase() === "high" ? project.cityCost : rate
     }, "low");
 
     sum += calculateDailyReimbursement(isTravelDay, rate) * isProjectDay;
