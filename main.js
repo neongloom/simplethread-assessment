@@ -122,7 +122,6 @@ const renderData = function() {
     const timelineheader = timelineheaderTemplate.content.firstElementChild.cloneNode(true);
 
     let timelineheaderHTML = '<div></div>';
-    days.forEach( (day, index, days) => console.log(day) )
     days.forEach( (day, index, days) => timelineheaderHTML += `<div>${index.replace(/([/][\d]+$)/, '')}</div>` )
     timelineheader.innerHTML = timelineheaderHTML;
     timeline.appendChild(timelineheader);
@@ -153,9 +152,9 @@ const renderData = function() {
       let dayStatus = isTravelDay ? "travel" : "full"; 
       dayStatus = reimbursement === 0 ? "free" : dayStatus;
 
-      return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}">${rate[0] ?? ""}</div>`
+      return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}"></div>`
 
-    }, '<button type="button">toggle amounts</button>')
+    }, '<button onclick="toggleCellDisplay()" type="button">toggle display</button>')
     timelinecalculation.innerHTML = timelinecalculationHTML;
     timeline.appendChild(timelinecalculation);
     parentContainer.appendChild(timeline);
@@ -164,7 +163,6 @@ const renderData = function() {
   /**
   a day is as a travel day when
     - it's at the start or end of a map
-    - key value is an empty array (between projects)
     - adjacent values are empty arrays (start or beginning or projects) AND there is only one project on the current day
   */
   const calculateTotalReimbursement = function(days) {
@@ -178,14 +176,17 @@ const renderData = function() {
   const calculateDayRates = function(days) {
     const dayrates = [];
     days.forEach((day, index, days) => {
-      console.log(index);
       const prev = days.get(day.prev);
       const next = days.get(day.next);
       const projects = day.projects;
       const isProjectDay = projects.length ? 1 : 0;
 
       // check sequences ends
+      // let isNextToAnotherProject = day.projects.some( project => {
+      //   return project.
+      // })
       let isTravelDay = (!prev || !next) && projects.length === 1; 
+        // const projectIsActive = day.projects.some( project => projectIndex === project.number);
 
       // check if it's between projects
       // isTravelDay = isTravelDay || !day.projects.length; 
@@ -233,5 +234,13 @@ function getSequenceEndDate(set) {
   return sequenceEnd;
 }
 
+window.toggleCellDisplay = function (){
+  const row = event.target.parentNode;
+  const cells = [...row.querySelectorAll('div')];
+  cells.forEach( cell => {
+    cell.classList.toggle('show-cost');
+  })
+
+}
 
 run();

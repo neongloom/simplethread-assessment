@@ -79,10 +79,26 @@ main {
 
 .timeline__calculation div {
   text-transform: uppercase;
+  position: relative;
+}
+.timeline__calculation div:before {
+  content: attr(data-rate);
+}
+.timeline__calculation div.show-cost:before {
+  content: attr(data-cost);
 }
 .timeline__calculation [data-status="travel"] {
   background-color:hsl(210 40% 90% / 0.4)
 }
 .timeline__calculation [data-status="full"] {
   background-color:hsl(210 80% 60% / 0.4)
+}
+.timeline__calculation button {
+  cursor: pointer;
+  background-color: #eee;
+  border: 4px solid #eee;
+}
+.timeline__calculation button:hover,
+.timeline__calculation button:focus-visible {
+   border: 4px solid grey;
 }
