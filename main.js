@@ -39,7 +39,7 @@ async function run() {
 
   });
   sequences.forEach( days => {
-    let totalReimbursement = calculateTotalReimbursement(days);
+    let totalReimbursement = render.calculateTotalReimbursement(days);
     console.log(totalReimbursement);
   })
 
@@ -117,6 +117,7 @@ const renderData = function() {
     const timeline = document.createElement('div');
     timeline.classList.add('timeline');
 
+    //  display all days in set of projects
     const timelineheaderTemplate = document.querySelector('.timeline-header-template');
     const timelineheader = timelineheaderTemplate.content.firstElementChild.cloneNode(true);
 
@@ -126,9 +127,7 @@ const renderData = function() {
     timelineheader.innerHTML = timelineheaderHTML;
     timeline.appendChild(timelineheader);
 
-    const startDate = getSequenceStartDate(projects)
-    const endDate = getSequenceEndDate(projects)
-
+    // display project days
     projects.forEach((project,projectIndex) => {
       const timelineprojectTemplate = document.querySelector('.timeline-project-template');
       const timelineproject = timelineprojectTemplate.content.firstElementChild.cloneNode(true);
@@ -143,41 +142,82 @@ const renderData = function() {
       timeline.appendChild(timelineproject);
     })
 
-    // projects.reduce( (cells, project) => {
-    //   let currentDay = startDate;
-    //   do {
-    //     const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
-        
-    //     currentDay = nextDay;
-    //   } while ( currentDay <= end)
-    //   return;
+    // display calculation
+    const timelinecalculationTemplate = document.querySelector('.timeline-calculation-template');
+    const timelinecalculation = timelinecalculationTemplate.content.firstElementChild.cloneNode(true);
+    let dayrates = calculateDayRates(days);
+    let timelinecalculationHTML = dayrates.reduce( (html, day) => {
+      const isTravelDay = day.isTravelDay;
+      const rate = day.rate;
+      const reimbursement = calculateDailyReimbursement(isTravelDay, rate);
+      let dayStatus = isTravelDay ? "travel" : "full"; 
+      dayStatus = reimbursement === 0 ? "free" : dayStatus;
 
-    // }, `<div>${project.cityCost}</div>`)
+      return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}">${rate[0] ?? ""}</div>`
 
-
+    }, '<button type="button">toggle amounts</button>')
+    timelinecalculation.innerHTML = timelinecalculationHTML;
+    timeline.appendChild(timelinecalculation);
     parentContainer.appendChild(timeline);
+  }
 
-    // const start = getSequenceStartDate(set)
-    // const end = getSequenceEndDate(set)
-    // let currentDay = start;
+  /**
+  a day is as a travel day when
+    - it's at the start or end of a map
+    - key value is an empty array (between projects)
+    - adjacent values are empty arrays (start or beginning or projects) AND there is only one project on the current day
+  */
+  const calculateTotalReimbursement = function(days) {
+    let sum = 0;
+    let dayrates = calculateDayRates(days);
+    console.log(dayrates);
+    sum = dayrates.reduce( (sum, day) => sum + calculateDailyReimbursement(day.isTravelDay, day.rate), 0)
+    return sum;
+  }
 
-    // // create map of all days in a sequence
-    // // projects stores (cost of) all projects occuring on that day
-    // do {
-    //   const nextDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
-    //   const prevDay = new Date(currentDay.getTime() - (1000 * 3600 * 24));
-    //   const next = (nextDay <= end) ? nextDay.toLocaleDateString() : null;
-    //   const prev = (currentDay != start) ? prevDay.toLocaleDateString() : null;
-    //   days.set(currentDay.toLocaleDateString(), { projects:[], next, prev }); // kind of realized here an actual linked list would be better so that's something I can refactor to in the future
-    //   currentDay = nextDay;
-    // } while ( currentDay <= end)
+  const calculateDayRates = function(days) {
+    const dayrates = [];
+    days.forEach((day, index, days) => {
+      console.log(index);
+      const prev = days.get(day.prev);
+      const next = days.get(day.next);
+      const projects = day.projects;
+      const isProjectDay = projects.length ? 1 : 0;
 
+      // check sequences ends
+      let isTravelDay = (!prev || !next) && projects.length === 1; 
+
+      // check if it's between projects
+      // isTravelDay = isTravelDay || !day.projects.length; 
+
+      // check if it's at the beginning or end of a project and isn't overlapping with or next to another project
+      isTravelDay = isTravelDay || ((!prev?.projects.length || !next?.projects.length) && day.projects.length === 1)
+      
+      // rate defaults to low cost, use higher cost rate if projects overlap
+      const rate = projects.reduce( (rate, project) => {
+        return rate === "high" ? rate : project.cityCost
+      }, "");
+
+      dayrates.push( {isTravelDay, rate});
+      // sum += calculateDailyReimbursement(isTravelDay, rate) * isProjectDay;
+    })
+    return dayrates;
+  }
+
+  const calculateDailyReimbursement = function(isTravelDay, rate) {
+    if (!rate) return 0;
+    if (isTravelDay) {
+      return rate === "low" ? 45 : 55;
+    } else {
+      return rate === "low" ? 75 : 85;
+    }
   }
 
   return {
     generateTable,
     visualizeDays,
-    mapDays
+    mapDays,
+    calculateTotalReimbursement
   }
 };
 
@@ -193,46 +233,5 @@ function getSequenceEndDate(set) {
   return sequenceEnd;
 }
 
-/**
-a day is as a travel day when
-  - it's at the start or end of a map
-  - key value is an empty array (between projects)
-  - adjacent values are empty arrays (start or beginning or projects) AND there is only one project on the current day
- */
-function calculateTotalReimbursement(days) {
-  let sum = 0;
-  days.forEach((day, index, days) => {
-    console.log(index);
-    const prev = days.get(day.prev);
-    const next = days.get(day.next);
-    const projects = day.projects;
-    const isProjectDay = projects.length ? 1 : 0;
-
-    // check sequences ends
-    let isTravelDay = (!prev || !next) && projects.length === 1; 
-
-    // check if it's between projects
-    isTravelDay = isTravelDay || !day.projects.length; 
-
-    // check if it's at the beginning or end of a project and isn't overlapping with or next to another project
-    isTravelDay = isTravelDay || ((!prev?.projects.length || !next?.projects.length) && day.projects.length === 1)
-    
-    // rate defaults to low cost, use higher cost rate if projects overlap
-    const rate = projects.reduce( (rate, project) => {
-      return rate === "low" && project.cityCost.toLowerCase() === "high" ? project.cityCost : rate
-    }, "low");
-
-    sum += calculateDailyReimbursement(isTravelDay, rate) * isProjectDay;
-  })
-  return sum;
-}
-
-function calculateDailyReimbursement(isTravelDay, rate) {
-  if (isTravelDay) {
-    return rate === "low" ? 45 : 55;
-  } else {
-    return rate === "low" ? 75 : 85;
-  }
-}
 
 run();
