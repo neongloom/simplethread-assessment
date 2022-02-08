@@ -18,10 +18,10 @@ async function GetData(url) {
 }
 
 async function getAllData() {
-  sets.push(await GetData('./data/set1.json'));
-  sets.push(await GetData('./data/set2.json'));
-  sets.push(await GetData('./data/set3.json'));
-  sets.push(await GetData('./data/set4.json'));
+  sets.push(await GetData('/data/set1.json'));
+  sets.push(await GetData('/data/set2.json'));
+  sets.push(await GetData('/data/set3.json'));
+  sets.push(await GetData('/data/set4.json'));
 }
 
 async function run() {
