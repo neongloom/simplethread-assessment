@@ -1,0 +1,22 @@
+[
+  {
+    "cityCost": "low",
+    "startDate": "09/01/15",
+    "endDate": "09/01/15"
+  },
+  {
+    "cityCost": "low",
+    "startDate": "09/01/15",
+    "endDate": "09/01/15"
+  },
+  {
+    "cityCost": "high",
+    "startDate": "09/02/15",
+    "endDate": "09/02/15"
+  },
+  {
+    "cityCost": "high",
+    "startDate": "09/02/15",
+    "endDate": "09/03/15"
+  }
+]
