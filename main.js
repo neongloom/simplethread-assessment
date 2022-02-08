@@ -141,6 +141,7 @@ function calculateTotalReimbursement(days) {
     const prev = days.get(day.prev);
     const next = days.get(day.next);
     const projects = day.projects;
+    const isProjectDay = projects.length ? 1 : 0;
 
     // check sequences ends
     let isTravelDay = (!prev || !next) && projects.length === 1; 
@@ -156,7 +157,7 @@ function calculateTotalReimbursement(days) {
       return rate === "low" && cost.toLowerCase() === "high" ? cost : rate
     }, "low");
 
-    sum += calculateDailyReimbursement(isTravelDay, rate);
+    sum += calculateDailyReimbursement(isTravelDay, rate) * isProjectDay;
   })
   return sum;
 }
