@@ -14,8 +14,13 @@
 }
 html {
   background-color: hsl(223, 20%, 94%);
+  font-family: europa, sans-serif;
 }
 
+.heading {
+  font-family: alda, serif;
+  text-transform: capitalize;
+}
 .heading, p {
   margin: 0;
   max-width: 72ch;
@@ -35,7 +40,7 @@ main {
 }
 
 header {
-  padding: 1.5rem;
+  padding: 2.5rem;
   background-color: hsl(0 5% 95%);
   box-shadow: 1px 1px 2px hsl(0 10% 50% / 0.2),
               2px 2px 4px hsl(0 15% 50% / 0.25),
@@ -52,9 +57,9 @@ header > * + * {
 .dataset {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: .875rem;
-  padding: 1rem;
+  /* align-items: flex-start; */
+  gap: 1.5rem;
+  padding: 2.5rem;
   background-color: hsl(0 5% 95%);
   box-shadow: 1px 1px 2px hsl(0 10% 50% / 0.2),
               2px 2px 4px hsl(0 15% 50% / 0.25),
@@ -67,8 +72,10 @@ header > * + * {
 .dataset table {
   border-spacing: 1rem;
   border-collapse: collapse;
-  /* border: 1px solid grey; */
   border-radius: var(--border-radius-s0);
+  width: 100%;
+  max-width: 36em;
+  margin-inline: auto;
 }
 .dataset thead {
   font-weight: 600;
@@ -77,6 +84,10 @@ header > * + * {
 .dataset td {
   padding: 0.5rem 0.75rem;
   border: 1px solid grey;
+}
+
+.timeline-container {
+  padding: 1rem 1.5rem; 
 }
 
 .timeline {
@@ -149,7 +160,7 @@ header > * + * {
 }
 
 button {
-  padding: 1em 1.5em;
+  padding: 1em 2.5em;
   font-weight: 600;
   background-color: hsl(187, 51%, 23%);
   color: #fff;
@@ -160,6 +171,7 @@ button {
   transition: box-shadow 200ms ease-out;
   position: relative;
   border: .5em solid hsl(187, 51%, 23%);
+  margin-inline: auto;
 
 }
 button:hover,
@@ -187,6 +199,7 @@ button:active::before {
 
 .total-reimbursement {
   font-size: 22px;
+  margin-inline: auto;
 }
 .total-reimbursement span {
   font-weight: 600;

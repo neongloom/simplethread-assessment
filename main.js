@@ -111,6 +111,10 @@ const renderData = function() {
     const days = daysets[datasetIndex];
     const projects = datasets[datasetIndex];
     const parentContainer = document.querySelector(`[data-set="${datasetIndex}"]`);
+    const timelineContainer = document.createElement('div');
+    timelineContainer.classList.add('timeline-container');
+    timelineContainer.innerHTML = `<h3 class="heading">Projects Timeline</h3>`;
+
     const timeline = document.createElement('div');
     timeline.classList.add('timeline');
 
@@ -138,6 +142,13 @@ const renderData = function() {
       timeline.appendChild(timelineproject);
     })
 
+    // display total reimbursement
+    const sum = calculateTotalReimbursement(days);
+    const sumContainer = document.createElement('div');
+    sumContainer.classList.add('total-reimbursement')
+    sumContainer.innerHTML = `Total Reimbursement: <span>$${sum}</span>`;
+    parentContainer.appendChild(sumContainer);
+
     // display calculation
     const timelinecalculationTemplate = document.querySelector('.timeline-calculation-template');
     const timelinecalculation = timelinecalculationTemplate.content.firstElementChild.cloneNode(true);
@@ -154,14 +165,8 @@ const renderData = function() {
     }, '<div>daily cost</div>')
     timelinecalculation.innerHTML = timelinecalculationHTML;
     timeline.appendChild(timelinecalculation);
-    parentContainer.appendChild(timeline);
-
-    // display total reimbursement
-    const sum = calculateTotalReimbursement(days);
-    const sumContainer = document.createElement('div');
-    sumContainer.classList.add('total-reimbursement')
-    sumContainer.innerHTML = `Total Reimbursement: <span>$${sum}</span>`;
-    parentContainer.appendChild(sumContainer);
+    timelineContainer.appendChild(timeline);
+    parentContainer.appendChild(timelineContainer);
   }
 
   /**
