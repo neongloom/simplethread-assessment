@@ -11,12 +11,29 @@
 <body>
   <main id="main">
     <header>
-      <h1 class="heading">Calculating reimbursement amounts for sets of projects</h1>
+      <h1 class="heading">Project reimbursement calculator</h1>
+      <p>
+        You have a set of projects, and you need to calculate a reimbursement amount for the set. Each project has a start date and an end date. The first day of a project and the last day of a project are always "travel" days. Days in the middle of a project are "full" days. There are also two types of cities a project can be in, high cost cities and low cost cities.
+
+      </p>
+      <p>A few rules:</p>
+      <ul>
+        <li>First day and last day of a project, or sequence of projects, is a travel day.</li>
+        <li>Any day in the middle of a project, or sequence of projects, is considered a full day.</li>
+        <li>If there is a gap between projects, then the days on either side of that gap are travel days.</li>
+        <li>If two projects push up against each other, or overlap, then those days are full days as well.</li>
+        <li>Any given day is only ever counted once, even if two projects are on the same day.</li>
+        <li>A travel day is reimbursed at a rate of 45 dollars per day in a low cost city.</li>
+        <li>A travel day is reimbursed at a rate of 55 dollars per day in a high cost city.</li>
+        <li>A full day is reimbursed at a rate of 75 dollars per day in a low cost city.</li>
+        <li>A full day is reimbursed at a rate of 85 dollars per day in a high cost city.</li>
+      </ul>
+      <h2 class="heading">Instructions</h2>
       <p>
         Click 'run scenario' to calculate the total reimbursement for a set of projects and visualize a daily timeline of the set.
       </p>
       <p>
-        Cell legend for the timeline:
+        Timeline legend:
         <ul>
           <li>green cells are reimbursed at the low cost city rate</li>
           <li>red cells are reimbursed at the high cost city rate</li>
