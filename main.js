@@ -3,6 +3,8 @@ import './style.css'
 const sets = [];
 const sequences = [];
 
+run();
+
 async function GetData(url) {
   try {
     const set =  await fetch(url);
@@ -99,7 +101,6 @@ const renderData = function() {
     let currentDay = startDate;
     do {
       const currentDayString = currentDay.toLocaleDateString();
-      // console.log(days.get(currentDayString));
       const day = days.get(currentDayString);
       day ? days.set(currentDayString, {...day, projects: [...day?.projects, {cityCost, number }] }) : null;
       currentDay = new Date(currentDay.getTime() + (1000 * 3600 * 24));
@@ -190,7 +191,6 @@ const renderData = function() {
 
       let isTravelDay = (!prev || !next || (!prev?.projects.length || !next?.projects.length)) && projects.length === 1 &&  !isAdjacentToAnotherProject; 
       
-      // rate defaults to low cost, use higher cost rate if projects overlap
       const rate = projects.reduce( (rate, project) => {
         return rate === "high" ? rate : project.cityCost
       }, "");
@@ -219,26 +219,10 @@ const renderData = function() {
 
 function getSequenceStartDate(set) {
   const sequenceStart = set.reduce( (prev, currentProject) =>  prev < currentProject.startDate ? prev : currentProject.startDate, new Date() )
-  // console.log(sequenceStart.toLocaleDateString());
   return sequenceStart;
 }
 
 function getSequenceEndDate(set) {
   const sequenceEnd = set.reduce( (prev, currentProject) =>  prev > currentProject.endDate ? prev : currentProject.endDate, 0)
-  // console.log(sequenceEnd.toLocaleDateString());
   return sequenceEnd;
 }
-
-window.toggleCellDisplay = function() {
-  const row = event.target.parentNode;
-  const cells = [...row.querySelectorAll('div')];
-  cells.forEach( cell => {
-    cell.classList.toggle('show-cost');
-  })
-
-}
-
-window.calculateReimbursement = function() {
-}
-
-run();
