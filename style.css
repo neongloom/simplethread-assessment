@@ -35,7 +35,14 @@ main {
 }
 
 header {
-  padding-inline: 1rem;
+  padding: 1.5rem;
+  background-color: hsl(0 5% 95%);
+  box-shadow: 1px 1px 2px hsl(0 10% 50% / 0.2),
+              2px 2px 4px hsl(0 15% 50% / 0.25),
+              3px 3px 6px hsl(0 20% 50% / 0.3),
+              4px 4px 8px hsl(0 25% 50% / 0.35),
+              5px 5px 8px hsl(0 30% 50% / 0.4);
+  border-radius: var(--border-radius-s0);
 }
 
 header > * + * {
