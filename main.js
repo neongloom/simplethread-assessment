@@ -1,9 +1,29 @@
 'use strict' 
 import './style.css'
-const sets = [];
-const sequences = [];
+const sets = []; // holds data from json files
+const sequences = []; // holds timeline information generated from data files 
 
 run();
+
+async function run() {
+  await getAllData();
+  const render = renderData();
+
+  sets.forEach( (set, index) => {
+    const days = render.mapDays(set);
+    sequences.push(days);
+    render.generateTable(set);
+  });
+
+  // set up 'run scenario' button events
+  const runButtons = [...document.querySelectorAll('.calculate-button')];
+  runButtons.forEach((button, index) => {
+    button.onclick = () => {
+      render.visualizeDays(index);
+      button.remove();
+    }
+  })
+}
 
 async function GetData(url) {
   try {
@@ -26,28 +46,9 @@ async function getAllData() {
   sets.push(await GetData('/data/set4.json'));
 }
 
-async function run() {
-  await getAllData();
-  const render = renderData();
-  sets.forEach( (set, index) => {
-    const days = render.mapDays(set);
-    sequences.push(days);
-    render.generateTable(set);
-  });
-  let runButtons = [...document.querySelectorAll('.calculate-button')];
-  runButtons.forEach((button, index) => {
-    button.onclick = () => {
-      render.visualizeDays(index);
-      button.remove();
-    }
-  })
-  console.log(sequences);
-}
-
 const renderData = function() {
   let datasets = [];
   let daysets = [];
-  console.log('render data');
 
   const generateTable = function(set) {
     if (!set) return;
@@ -107,6 +108,7 @@ const renderData = function() {
     } while ( currentDay <= endDate)
   }
 
+  // draws the timeline
   const visualizeDays = function(datasetIndex) {
     const days = daysets[datasetIndex];
     const projects = datasets[datasetIndex];
@@ -175,13 +177,13 @@ const renderData = function() {
     - adjacent values are empty arrays (start or beginning or projects) AND there is only one project on the current day
   */
   const calculateTotalReimbursement = function(days) {
-    let sum = 0;
     let dayrates = calculateDayRates(days);
     console.log(dayrates);
-    sum = dayrates.reduce( (sum, day) => sum + calculateDailyReimbursement(day.isTravelDay, day.rate), 0)
+    const sum = dayrates.reduce( (sum, day) => sum + calculateDailyReimbursement(day.isTravelDay, day.rate), 0)
     return sum;
   }
 
+  /* return array with rate information for each day in a set useful for calculating the reimbursement*/
   const calculateDayRates = function(days) {
     const dayrates = [];
     days.forEach((day, index, days) => {
@@ -205,6 +207,7 @@ const renderData = function() {
     return dayrates;
   }
 
+  /* calculates daily cost from rate information */
   const calculateDailyReimbursement = function(isTravelDay, rate) {
     if (!rate) return 0;
     if (isTravelDay) {
@@ -214,6 +217,16 @@ const renderData = function() {
     }
   }
 
+  function getSequenceStartDate(set) {
+    const sequenceStart = set.reduce( (prev, currentProject) =>  prev < currentProject.startDate ? prev : currentProject.startDate, new Date() )
+    return sequenceStart;
+  }
+
+  function getSequenceEndDate(set) {
+    const sequenceEnd = set.reduce( (prev, currentProject) =>  prev > currentProject.endDate ? prev : currentProject.endDate, 0)
+    return sequenceEnd;
+  }
+
   return {
     generateTable,
     visualizeDays,
@@ -221,13 +234,3 @@ const renderData = function() {
     calculateTotalReimbursement
   }
 };
-
-function getSequenceStartDate(set) {
-  const sequenceStart = set.reduce( (prev, currentProject) =>  prev < currentProject.startDate ? prev : currentProject.startDate, new Date() )
-  return sequenceStart;
-}
-
-function getSequenceEndDate(set) {
-  const sequenceEnd = set.reduce( (prev, currentProject) =>  prev > currentProject.endDate ? prev : currentProject.endDate, 0)
-  return sequenceEnd;
-}

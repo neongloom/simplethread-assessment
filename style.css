@@ -13,7 +13,7 @@
   --color-low-dark: hsl(140 95% 35%);
 }
 html {
-  background-color: hsl(223, 20%, 94%);
+  background-color: hsl(223, 20%, 92%);
   font-family: europa, sans-serif;
 }
 
@@ -41,7 +41,7 @@ main {
 
 header {
   padding: 2.5rem;
-  background-color: hsl(0 5% 95%);
+  background-color: hsl(0 5% 99%);
   box-shadow: 1px 1px 2px hsl(0 10% 50% / 0.2),
               2px 2px 4px hsl(0 15% 50% / 0.25),
               3px 3px 6px hsl(0 20% 50% / 0.3),
@@ -60,7 +60,7 @@ header > * + * {
   /* align-items: flex-start; */
   gap: 1.5rem;
   padding: 2.5rem;
-  background-color: hsl(0 5% 95%);
+  background-color: hsl(0 5% 99%);
   box-shadow: 1px 1px 2px hsl(0 10% 50% / 0.2),
               2px 2px 4px hsl(0 15% 50% / 0.25),
               3px 3px 6px hsl(0 20% 50% / 0.3),
@@ -70,20 +70,39 @@ header > * + * {
 }
 
 .dataset table {
-  border-spacing: 1rem;
-  border-collapse: collapse;
+  border-spacing: 0;
+  /* border-collapse: collapse; */
   border-radius: var(--border-radius-s0);
   width: 100%;
   max-width: 36em;
   margin-inline: auto;
+  --table-border-radius: 6px
 }
 .dataset thead {
   font-weight: 600;
   font-size: 1.25rem;
 }
+.dataset thead td:first-child {
+  border-top-left-radius: var(--table-border-radius);
+}
+.dataset thead td:last-child {
+  border-top-right-radius: var(--table-border-radius);
+}
 .dataset td {
   padding: 0.5rem 0.75rem;
   border: 1px solid grey;
+}
+.dataset td + td {
+  border-left: 0;
+}
+.dataset tr + tr td {
+  border-top: 0;
+}
+.dataset tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--table-border-radius);
+}
+.dataset tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--table-border-radius);
 }
 
 .timeline-container {
@@ -172,14 +191,14 @@ button {
               2px 2px 2px hsl(187 15% 50% / 0.25);
   transition: box-shadow 200ms ease-out;
   position: relative;
-  border: .5em solid hsl(187, 51%, 23%);
+  border: .25em solid hsl(187, 51%, 23%);
   margin-inline: auto;
 
 }
 button:hover,
 button:focus-visible {
   outline: 0;
-  border: .5em solid rgb(243 121 121);
+  border: .25em solid rgb(243 121 121);
 }
 
 button::before {
@@ -191,7 +210,7 @@ button::before {
               4px 4px 8px hsl(187 25% 50% / 0.35),
               5px 5px 8px hsl(187 30% 50% / 0.4);
   border-radius: 5px;
-  inset: -.5em;
+  inset: -.25em;
   opacity: 1;
   transition: opacity 250ms ease;
 }
