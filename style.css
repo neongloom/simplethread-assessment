@@ -13,7 +13,7 @@
   --color-low-dark: hsl(140 95% 35%);
 }
 html {
-  background-color: hsl(223, 20%, 92%);
+  background-color: hsl(123, 20%, 92%);
   font-family: europa, sans-serif;
 }
 
@@ -115,6 +115,13 @@ header > * + * {
   overflow-x: auto;
   width: 100%;
   padding-block: 1em;
+  position: relative;
+}
+.timeline::before {
+  position: absolute;
+  inset: 0;
+  content: '';
+
 }
 .timeline > * {
   display: grid;
