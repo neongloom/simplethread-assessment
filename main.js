@@ -31,12 +31,12 @@ async function run() {
     const days = render.mapDays(set);
     sequences.push(days);
     render.generateTable(set);
-    render.visualizeDays(index);
-
   });
-  sequences.forEach( days => {
-    let totalReimbursement = render.calculateTotalReimbursement(days);
-    console.log(totalReimbursement);
+  let runButtons = [...document.querySelectorAll('.calculate-button')];
+  runButtons.forEach((button, index) => {
+    button.onclick = () => {
+      render.visualizeDays(index);
+    }
   })
   console.log(sequences);
 }
@@ -153,6 +153,12 @@ const renderData = function() {
     timelinecalculation.innerHTML = timelinecalculationHTML;
     timeline.appendChild(timelinecalculation);
     parentContainer.appendChild(timeline);
+
+    // display total reimbursement
+    const sum = calculateTotalReimbursement(days);
+    const sumContainer = document.createElement('div');
+    sumContainer.textContent = `Total Reimbursement: $${sum}`;
+    parentContainer.appendChild(sumContainer);
   }
 
   /**
