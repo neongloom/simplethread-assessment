@@ -36,6 +36,7 @@ async function run() {
   runButtons.forEach((button, index) => {
     button.onclick = () => {
       render.visualizeDays(index);
+      button.remove();
     }
   })
   console.log(sequences);
@@ -149,7 +150,7 @@ const renderData = function() {
 
       return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}"><span>${reimbursement}</span><span></span></div>`
 
-    }, '<div></div>')
+    }, '<div>daily cost</div>')
     timelinecalculation.innerHTML = timelinecalculationHTML;
     timeline.appendChild(timelinecalculation);
     parentContainer.appendChild(timeline);
@@ -157,7 +158,8 @@ const renderData = function() {
     // display total reimbursement
     const sum = calculateTotalReimbursement(days);
     const sumContainer = document.createElement('div');
-    sumContainer.textContent = `Total Reimbursement: $${sum}`;
+    sumContainer.classList.add('total-reimbursement')
+    sumContainer.innerHTML = `Total Reimbursement: <span>$${sum}</span>`;
     parentContainer.appendChild(sumContainer);
   }
 
