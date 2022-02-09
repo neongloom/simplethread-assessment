@@ -160,8 +160,10 @@ header > * + * {
 }
 
 button {
-  padding: 1em 2.5em;
-  font-weight: 600;
+  padding: .5em 1.125em;
+  font-family: 'europa', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
   background-color: hsl(187, 51%, 23%);
   color: #fff;
   cursor: pointer;
