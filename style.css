@@ -1,12 +1,16 @@
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: border-box;
 }
+
 :root {
   --border-radius-s0: .5em;
   --border-radius-s-1: .25em;
-
+  --color-high: hsl(10 90% 80%);
+  --color-high-dark: hsl(10 95% 30%);
+  --color-low: hsl(140 90% 85%);
+  --color-low-dark: hsl(140 95% 35%);
 }
 
 main {
@@ -66,33 +70,56 @@ main {
   place-content: center;
   padding: .5rem 0.25rem;
   gap: 2px;
-  background-color: blanchedalmond;
+  background-color: hsl(56, 32%, 91%);
   border: 1px solid grey;
   border-radius: var(--border-radius-s-1);
 }
 .timeline [data-cost="low"] .isActive {
-  background-color: aquamarine;
+  background-color: var(--color-low);
 }
 .timeline [data-cost="high"] .isActive {
-  background-color: lightcoral;
+  background-color: var(--color-high);
 }
 
 .timeline__calculation div {
   text-transform: uppercase;
   position: relative;
+  font-weight: 600;
 }
-.timeline__calculation div:before {
-  content: attr(data-rate);
+.timeline__calculation [data-rate="h"] {
+  background-color: var(--color-high);
 }
-.timeline__calculation div.show-cost:before {
-  content: attr(data-cost);
+.timeline__calculation [data-rate="l"] {
+  background-color: var(--color-low);
 }
-.timeline__calculation [data-status="travel"] {
-  background-color:hsl(210 40% 90% / 0.4)
+.timeline__calculation [data-rate="l"] :last-child {
+  background-color: var(--color-low);
+  border-color: var(--color-low);
 }
-.timeline__calculation [data-status="full"] {
-  background-color:hsl(210 80% 60% / 0.4)
+
+.timeline__calculation div :first-child {
+  margin: 1ex;
 }
+
+.timeline__calculation div :last-child {
+  position: absolute;
+}
+
+.timeline__calculation [data-status="full"] :last-child {
+  inset: auto 6px 6px;
+  border: 3px solid grey;
+  background-color: grey;
+  border-radius: 4px;
+}
+.timeline__calculation [data-rate="h"][data-status="full"] :last-child {
+  border-color: var(--color-high-dark);
+  background-color: var(--color-high-dark);
+}
+.timeline__calculation [data-rate="l"][data-status="full"] :last-child {
+  border-color: var(--color-low-dark);
+  background-color: var(--color-low-dark);
+}
+
 .timeline__calculation button {
   cursor: pointer;
   background-color: #eee;

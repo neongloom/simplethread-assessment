@@ -147,9 +147,9 @@ const renderData = function() {
       let dayStatus = isTravelDay ? "travel" : "full"; 
       dayStatus = reimbursement === 0 ? "free" : dayStatus;
 
-      return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}"></div>`
+      return `${html}<div data-status="${dayStatus}" data-rate="${rate[0] ?? ''}" data-cost="${reimbursement}"><span>${reimbursement}</span><span></span></div>`
 
-    }, '<button onclick="toggleCellDisplay()" type="button">toggle display</button>')
+    }, '<div></div>')
     timelinecalculation.innerHTML = timelinecalculationHTML;
     timeline.appendChild(timelinecalculation);
     parentContainer.appendChild(timeline);
